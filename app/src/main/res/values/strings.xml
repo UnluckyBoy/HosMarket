@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">中医助手</string>
+    <string name="title_home">主页</string>
+    <string name="title_dashboard">工作台</string>
+    <string name="title_notifications">个人中心</string>
+    <string name="history">历史</string>
+    <string name="message">我的消息</string>
+    <string name="other">其他</string>
+
+    <string name="text_test">清风</string>
+    <string name="num_test">999999+</string>
+    <string name="btn_des">图片按钮</string>
+    <string name="hint_account">账号</string>
+    <string name="hint_password">密码</string>
+    <string name="btn_login">登录</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_confirm">确定</string>
+    <string name="editText">请输入。。。</string>
+    <string name="outWareHouseLabel">出库</string>
+    <string name="toWareHouseLabel">入库</string>
+    <string name="outWareHouseTitle">物资出库</string>
+    <string name="toWareHouseTitle">物资入库</string>
+    <string name="scanLabel">条码扫描</string>
+    <string name="codeViewLabel">编码:</string>
+    <string name="nameViewLabel">名称:</string>
+    <string name="priceViewLabel">进货价格:</string>
+    <string name="retailViewLabel">零售价格:</string>
+    <string name="batchViewLabel">批次:</string>
+    <string name="createTimeViewLabel">生产日期:</string>
+    <string name="toWareHouseBtn">药剂入库</string>
+    <string name="outWareHouseBtn">药剂出库</string>
+    <string name="toHouseCountViewLabel">入库数量:</string>
+    <string name="outHouseCountViewLabel">出库数量:</string>d
+</resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.percentlayout.widget.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.DashboardFragment">
+
+    <RelativeLayout
+        android:id="@+id/layBtnView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_widthPercent="100%"
+        app:layout_heightPercent="4%"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/btn_base_normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+            <TextView
+                android:id="@+id/toWareHouse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/toWareHouseLabel"
+                android:textSize="18sp"
+                android:textColor="@color/gray"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/outWareHouse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/outWareHouseLabel"
+                android:textSize="18sp"
+                android:textColor="@color/gray"
+                android:gravity="center"
+                android:layout_marginStart="2dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_widthPercent="100%"
+        app:layout_heightPercent="100%"
+        android:layout_marginTop="2dp"
+        android:layout_below="@id/layBtnView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:textAlignment="center"
+            android:background="@drawable/lay_md_amber_50"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </androidx.viewpager2.widget.ViewPager2>
+    </RelativeLayout>
+</androidx.percentlayout.widget.PercentRelativeLayout>
