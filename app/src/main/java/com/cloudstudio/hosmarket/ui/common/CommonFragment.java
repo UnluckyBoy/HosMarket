@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,20 +17,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.percentlayout.widget.PercentRelativeLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cloudstudio.hosmarket.R;
+import com.cloudstudio.hosmarket.adpater.fragment.OrderAdapter;
+import com.cloudstudio.hosmarket.entity.OrderBean;
 import com.cloudstudio.hosmarket.entity.WebServerResponseBean;
+import com.cloudstudio.hosmarket.entity.WebServerResponseOrderBean;
 import com.cloudstudio.hosmarket.network.api.AddWareHouseApi;
+import com.cloudstudio.hosmarket.network.api.OrderApi;
 import com.cloudstudio.hosmarket.network.api.OutWareHouseApi;
 import com.cloudstudio.hosmarket.network.api.QueryMedicineApi;
 import com.cloudstudio.hosmarket.network.service.AddWareHouseService;
+import com.cloudstudio.hosmarket.network.service.OrderService;
 import com.cloudstudio.hosmarket.network.service.OutWareHouseService;
 import com.cloudstudio.hosmarket.network.service.QueryMedicineService;
 import com.cloudstudio.hosmarket.util.StringUtil;
+import com.cloudstudio.hosmarket.util.UUIDNumberUtil;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -47,7 +58,11 @@ public class CommonFragment extends Fragment {
 
     private View root;
 
-    private PercentRelativeLayout wareHouseManagerLay;
+    private PercentRelativeLayout wareHouseManagerLay,orderManagerLay;
+    RecyclerView orderRecyclerView;
+
+    List<OrderBean> orderList;
+
     private TextView codeText;
     private TextView nameText;
     private TextView createTimeText;
@@ -55,6 +70,8 @@ public class CommonFragment extends Fragment {
     private TextView priceText;
     private TextView retailText;
     private TextView countText;
+
+    private String orderUid="";
 
     public static CommonFragment newInstance(int layoutResId,String parentType) {
         CommonFragment fragment = new CommonFragment();
@@ -96,14 +113,23 @@ public class CommonFragment extends Fragment {
             case"outWareHouse":
                 fragmentTitle.setText(R.string.outWareHouseTitle);
                 break;
+            case"order":
+                fragmentTitle.setText(R.string.orderTitle);
+                orderRecyclerView=root.findViewById(R.id.orderListView);
+                orderRecyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+                orderList = new ArrayList<>();
+                //orderUid= UUIDNumberUtil.randUUIDNumberAndTime();
+                break;
         }
     }
 
     private void initView(View view){
         Button scanBtnView = view.findViewById(R.id.scanBtn);
         wareHouseManagerLay=view.findViewById(R.id.wareHouseManagerLay);
+        orderManagerLay=view.findViewById(R.id.orderManagerLay);
 
         wareHouseManagerLay.setVisibility(View.GONE);
+        orderManagerLay.setVisibility(View.GONE);
         scanBtnView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,7 +153,7 @@ public class CommonFragment extends Fragment {
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
             result -> {
                 if(result.getContents() == null) {
-                    Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "取消扫码", Toast.LENGTH_SHORT).show();
                 } else {
                     //Toast.makeText(getActivity(), "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                     bindView(result.getContents());
@@ -142,7 +168,7 @@ public class CommonFragment extends Fragment {
         priceText=root.findViewById(R.id.priceText);
         retailText=root.findViewById(R.id.retailText);
         countText=root.findViewById(R.id.countText);
-        TextView countViewLabel=root.findViewById(R.id.countViewLabel);
+        TextView countViewLabel = root.findViewById(R.id.countViewLabel);
         Button wareHouseBtn = root.findViewById(R.id.wareHouseBtn);
         switch (parentType){
             case "toWareHouse":
@@ -202,6 +228,10 @@ public class CommonFragment extends Fragment {
                         Toast.makeText(getActivity(),"网络异常",Toast.LENGTH_SHORT).show();
                     }
                 });
+                break;
+            case "order":
+                orderManagerLay.setVisibility(View.VISIBLE);
+                orderHandle(data);
                 break;
         }
 
@@ -265,6 +295,10 @@ public class CommonFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * 清空出入库的视图逻辑
+     */
     private void clearAllElement(){
         codeText.setText("");
         nameText.setText("");
@@ -274,5 +308,35 @@ public class CommonFragment extends Fragment {
         retailText.setText("");
         countText.setText("");
         wareHouseManagerLay.setVisibility(View.GONE);
+    }
+
+    private void orderHandle(String data){
+        Button settleBtn=root.findViewById(R.id.settleBtn);
+        Button cancelBtn=root.findViewById(R.id.cancelBtn);
+        if(StringUtil.isEmptyStr(orderUid)){
+            orderUid= UUIDNumberUtil.randUUIDNumberAndTime();
+        }
+
+        OrderApi orderApi=new OrderApi();
+        OrderService orderService=orderApi.getService();
+        Call<WebServerResponseOrderBean> orderCall=orderService.getState(orderUid,data.substring(0,6),
+                Integer.parseInt(data.substring(14,18)),data.substring(6,14));
+        orderCall.enqueue(new Callback<WebServerResponseOrderBean>() {
+            @Override
+            public void onResponse(Call<WebServerResponseOrderBean> call, Response<WebServerResponseOrderBean> response) {
+                if(response.body().getHandleCode()==200){
+                    orderList.add(response.body().getHandleData());
+                    OrderAdapter adapter = new OrderAdapter(getActivity(), orderList);
+                    orderRecyclerView.setAdapter(adapter);
+                }else {
+                    Toast.makeText(getActivity(),nameText.getText().toString()+response.body().getHandleMessage(),Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WebServerResponseOrderBean> call, Throwable throwable) {
+                Toast.makeText(getActivity(),"网络异常",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

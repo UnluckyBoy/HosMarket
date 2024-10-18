@@ -62,9 +62,9 @@ public class HomeFragment extends Fragment {
     private void initBannerView(View root){
         Banner mBanner = binding.bannerView;//绑定轮播
         mBannerDataList=new ArrayList<>();
-        mBannerDataList.add(new BannerDataInfo(R.mipmap.banner_01,"测试轮播链接1:https://test.com"));
-        mBannerDataList.add(new BannerDataInfo(R.mipmap.banner_01,"测试轮播链接2:https://test.com"));
-        mBannerDataList.add(new BannerDataInfo(R.mipmap.banner_01,"测试轮播链接3:https://test.com"));
+        mBannerDataList.add(new BannerDataInfo(R.mipmap.banner02,"测试轮播链接1:https://test.com"));
+        mBannerDataList.add(new BannerDataInfo(R.mipmap.banner01,"测试轮播链接2:https://test.com"));
+        mBannerDataList.add(new BannerDataInfo(R.mipmap.banner02,"测试轮播链接3:https://test.com"));
 
         final BannerImageAdapter bannerImageAdapter=new BannerImageAdapter(mBannerDataList);
 
